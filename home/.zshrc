@@ -114,38 +114,61 @@ gpgconf --launch gpg-agent
 
 # added by Anaconda3 5.3.0 installer
 # export PATH="/home/richard/anaconda3/bin:$PATH"  # commented out by conda initialize
+
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
-# __conda_setup="$('/home/richard/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-# if [ $? -eq 0 ]; then
-#     eval "$__conda_setup"
-# else
-#     if [ -f "/home/richard/anaconda3/etc/profile.d/conda.sh" ]; then
-#         . "/home/richard/anaconda3/etc/profile.d/conda.sh"
-#     else
-#         export PATH="/home/richard/anaconda3/bin:$PATH"
-#     fi
-# fi
-# unset __conda_setup
+__conda_setup="$('/home/richard/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/home/richard/anaconda3/etc/profile.d/conda.sh" ]; then
+        . "/home/richard/anaconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="/home/richard/anaconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
 # <<< conda initialize <<<
 
-# Vim in terminal
 # enable vim bindings
 bindkey -v
 
-# Rust
 # enable Path for cargo bin
 export PATH="$HOME/.cargo/bin:$PATH"
 
-# Ruby
+
 # Install Ruby Gems to ~/gems
 export GEM_HOME="$HOME/gems"
 export PATH="$HOME/gems/bin:$PATH"
+
 # rbenv 
 export PATH="$HOME/.rbenv/bin:$PATH"
 eval "$(rbenv init -)"
 export PATH="$HOME/.rbenv/plugins/ruby-build/bin:$PATH"
 
-# Steam
 # protontricks
 alias protontricks-flat='flatpak run --command=protontricks com.valvesoftware.Steam'
+
+# export editor
+export EDITOR='nvim'
+
+# include ~/.local/bin
+path+=('/home/richard/.local/bin')
+export PATH
+
+# alias for insync
+alias gdrive="cd /home/richard/Insync/hochuan97@gmail.com/Google\ Drive/"
+
+# solution to copy paste bug from zsh-autocomplete 
+# This speeds up pasting w/ autosuggest
+# https://github.com/zsh-users/zsh-autosuggestions/issues/238
+pasteinit() {
+  OLD_SELF_INSERT=${${(s.:.)widgets[self-insert]}[2,3]}
+  zle -N self-insert url-quote-magic # I wonder if you'd need `.url-quote-magic`?
+}
+
+pastefinish() {
+  zle -N self-insert $OLD_SELF_INSERT
+}
+zstyle :bracketed-paste-magic paste-init pasteinit
+zstyle :bracketed-paste-magic paste-finish pastefinish

@@ -7,7 +7,7 @@
 	// Choose the order of the modules
 	"modules-left": ["sway/workspaces", "sway/mode"],
 	// "modules-center": ["sway/window"],
-	"modules-right": ["custom/arch_update", "custom/disk_home", "custom/disk_root","temperature", "cpu", "memory", "custom/mail", "network", "backlight", "pulseaudio", "clock", "battery", "idle_inhibitor", "tray"],
+	"modules-right": ["network", "custom/disk_home", "custom/disk_root","temperature", "cpu", "custom/power_profile", "memory", "backlight", "pulseaudio", "clock", "battery", "tray"],
 
 	// Modules configuration
 	// "sway/workspaces": {
@@ -30,6 +30,14 @@
 	"sway/mode": {
 		"format": "{}"
 	},
+        "custom/power_profile": {
+                "format": "🗲 {} ",
+                "interval": 30,
+                "exec": "powerprofilesctl get",
+                "on-click": "powerprofilesctl set power-saver",
+                "on-click-middle": "powerprofilesctl set balanced",
+                "on-click-right": "powerprofilesctl set performance"
+        },
 	"custom/arch_update": {
 		"format": "<span color='#589df6'></span>{}",
 		"interval": 30,
@@ -38,12 +46,13 @@
 	"custom/disk_home": {
 		"format": "💽  {} ",
 		"interval": 30,
-		"exec": "btrfs fi df -h $HOME | grep Data"
+		"exec": "btrfs fi df -h $HOME | grep Data | awk '{print $4}'"
 	},
 	// "custom/disk_root": {
 	// 	"format": "💽🏠 {} ",
 	// 	"interval": 30,
 	// 	"exec": "df -h --output=avail / | tail -1 | tr -d ' '"
+	//	"exec": "sudo btrfs qgroup show $HOME | grep 450 | awk '$1 ~ /[0-9]/ { print $2 }'" 
 	// },
 	"temperature": {
 		// "thermal-zone": 2,
@@ -54,7 +63,7 @@
 		"format-icons": ["", "", ""]
 	},
 	"cpu": {
-		"format": "🏭 {usage}%",
+		"format": "🏭 load: {load} usage: {usage}% freq: {avg_frequency}",
 		"tooltip": false
 	},
 	"memory": {
@@ -66,15 +75,15 @@
 		"exec": "notmuch count tag:flagged OR tag:inbox AND NOT tag:killed"
 	},
 	"network": {
-		"family": "ipv6",
-		// "interface": "wlan0", // (Optional) To force the use of this interface
-		"format-wifi": "<span color='#589df6'></span> <span color='gray'>{essid}</span> {frequency} <span color='#589df6'>{signaldBm} dB</span> <span color='#589df6'>⇵</span>{bandwidthDownBits}/{bandwidthUpBits}",
+		"family": "ipv4",
+		"interface": "wlp3s0", // (Optional) To force the use of this interface
+		"format-wifi": "<span color='#589df6'> </span> <span color='gray'>{essid}</span> {frequency} <span color='#589df6'>{signaldBm}dB </span><span color='#589df6'>⇵ </span>{bandwidthDownBits} {bandwidthUpBits}",
 		"format-ethernet": "{ifname}: {ipaddr}/{cidr} ",
 		"format-linked": "{ifname} (No IP) ",
 		"format-disconnected": "Disconnected ⚠",
 		"format-alt": "{ifname}: {ipaddr}/{cidr}",
 		"interval": 5,
-        "on-click-right": "cinnamon-settings network"
+        "on-click-right": "gnome-settings"
 	},
 	"backlight": {
 		// "device": "acpi_video1",
@@ -112,12 +121,12 @@
 	},
 	"battery": {
 		"states": {
-			// "good": 95,
+			"good": 75,
 			"warning": 20,
 			"critical": 10
 		},
 		"format": "<span color='#e88939'>{icon}</span> {capacity}% ({time})",
-		"format-charging": "<span color='#e88939'> </span> {capacity}%",
+		"format-charging": "<span color='#e88939'>{icon} </span> {capacity}% ({time})",
 		"format-plugged":  "<span color='#e88939'>{icon} </span> {capacity}% ({time})",
 		// "format-good": "", // An empty format will hide the module
 		// "format-full": "",
